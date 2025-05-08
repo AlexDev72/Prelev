@@ -1,30 +1,15 @@
-package com.prelev.apirest_springboot.modele;
-
-import jakarta.persistence.*;
-
+package com.prelev.apirest_springboot.dto;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
-
-
-
-@Entity
-@Table(name = "Prelevement")
-public class Prelevement {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PrelevementResponseDTO {
     private Long id;
     private String nom;
-    private Date date_prelevement;
+    private LocalDate datePrelevement;
     private Integer prix;
 
-    public Date getDate_prelevement() {
-        return date_prelevement;
-    }
-
-    public void setDate_prelevement(Date date_prelevement) {
-        this.date_prelevement = date_prelevement;
-    }
+    // Getters & Setters
 
     public Long getId() {
         return id;
@@ -40,6 +25,14 @@ public class Prelevement {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public LocalDate getDatePrelevement() {
+        return datePrelevement;
+    }
+
+    public void setDatePrelevement(LocalDate datePrelevement) {
+        this.datePrelevement = datePrelevement;
     }
 
     public Integer getPrix() {
