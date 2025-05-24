@@ -11,4 +11,3 @@ public class ApirestSpringbootApplication {
 	}
 
 }
-rm -Force -Recurse .git
