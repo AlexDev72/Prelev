@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // à ajuster selon besoin
+@CrossOrigin(origins = "http://localhost:3000") // à ajuster selon besoin
 public class ConnexionController {
 
     private final ConnexionService connexionService;

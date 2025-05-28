@@ -3,6 +3,7 @@ package com.prelev.apirest_springboot.service;
 import com.prelev.apirest_springboot.dto.ConnexionResponseDTO;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.UtilisateurRepository;
+import com.prelev.apirest_springboot.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,9 @@ public class ConnexionService {
             throw new RuntimeException("Mot de passe invalide");
         }
 
-        // Ici tu peux générer un token JWT, ou retourner un message simple
-        String fakeToken = "token-simule-pour-demo";
+        // Génération du token JWT
+        String token = JwtUtil.generateToken(email);
 
-        return new ConnexionResponseDTO(fakeToken);
+        return new ConnexionResponseDTO(token);
     }
 }

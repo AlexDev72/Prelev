@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="apirest-springboot" options="-parameters -parameters" />
+      <module name="apirest-springboot" options="-parameters" />
     </option>
   </component>
 </project>
