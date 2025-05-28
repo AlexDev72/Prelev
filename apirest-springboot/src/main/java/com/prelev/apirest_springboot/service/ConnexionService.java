@@ -28,6 +28,6 @@ public class ConnexionService {
         // Génération du token JWT
         String token = JwtUtil.generateToken(email);
 
-        return new ConnexionResponseDTO(token);
+        return new ConnexionResponseDTO(token, utilisateur.getId());
     }
 }

@@ -22,14 +22,20 @@ public class PrelevementServiceImpl implements PrelevementService {
 
     @Override
     public PrelevementResponseDTO create(PrelevementCreateDTO dto, Utilisateur utilisateur) {
+        if (dto.getDatePrelevement() == null) {
+            throw new IllegalArgumentException("La date de prélèvement est obligatoire");
+        }
+
         Prelevement prelevement = new Prelevement();
         prelevement.setNom(dto.getNom());
         prelevement.setPrix(dto.getPrix());
-        prelevement.setDate_prelevement(Date.valueOf(dto.getDatePrelevement()));
+        java.sql.Date sqlDate = java.sql.Date.valueOf(dto.getDatePrelevement());
+        prelevement.setDate_prelevement(sqlDate);
         prelevement.setUtilisateur(utilisateur);
         Prelevement saved = prelevementRepository.save(prelevement);
         return toResponseDTO(saved);
     }
+
 
     @Override
     public List<PrelevementResponseDTO> read(Utilisateur utilisateur) {

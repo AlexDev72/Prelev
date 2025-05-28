@@ -1,13 +1,14 @@
 package com.prelev.apirest_springboot.dto;
 
 public class ConnexionResponseDTO {
-
     private String token;
+    private Long utilisateurId;  // ou int selon ton type
 
-    public ConnexionResponseDTO() {}
+    // Constructeurs, getters, setters
 
-    public ConnexionResponseDTO(String token) {
+    public ConnexionResponseDTO(String token, Long utilisateurId) {
         this.token = token;
+        this.utilisateurId = utilisateurId;
     }
 
     public String getToken() {
@@ -17,4 +18,13 @@ public class ConnexionResponseDTO {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public Long getUtilisateurId() {
+        return utilisateurId;
+    }
+
+    public void setUtilisateurId(Long utilisateurId) {
+        this.utilisateurId = utilisateurId;
+    }
 }
+
