@@ -18,15 +18,17 @@ public class ConnexionService {
     }
 
     public ConnexionResponseDTO login(String email, String mdp) {
+        // Récupération de l'utilisateur
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
+        // Vérification du mot de passe
         if (!passwordEncoder.matches(mdp, utilisateur.getMdp())) {
             throw new RuntimeException("Mot de passe invalide");
         }
 
-        // Génération du token JWT
-        String token = JwtUtil.generateToken(email);
+        // Génération du token avec l'utilisateur complet
+        String token = JwtUtil.generateToken(utilisateur); // <- Changement ici
 
         return new ConnexionResponseDTO(token, utilisateur.getId());
     }

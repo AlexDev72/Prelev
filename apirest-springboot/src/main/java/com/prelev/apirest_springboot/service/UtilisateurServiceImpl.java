@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,25 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         Utilisateur saved = utilisateurRepository.save(utilisateur);
         return toResponseDTO(saved);
+    }
+
+    @Override
+    public UtilisateurResponseDTO findById(Long id) {
+        return utilisateurRepository.findById(id)
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + id));
+    }
+
+    @Override
+    public Optional<UtilisateurResponseDTO> findByUsername(String username) {
+        return Optional.empty();
+    }
+
+
+    @Override
+    public Optional<UtilisateurResponseDTO> findOptionalById(Long id) {
+        return utilisateurRepository.findById(id)
+                .map(this::toResponseDTO);
     }
 
     @Override
