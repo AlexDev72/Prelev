@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/connexion").permitAll()
                         .requestMatchers(HttpMethod.POST, "/utilisateur/cree").permitAll()
                         .requestMatchers(HttpMethod.GET, "/prelevement/lire").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/utilisateur/modifier/**").permitAll()
                         // Ajoutez explicitement votre endpoint de profil
                         .requestMatchers(HttpMethod.GET, "/utilisateur/profil").authenticated()
                         .anyRequest().authenticated()

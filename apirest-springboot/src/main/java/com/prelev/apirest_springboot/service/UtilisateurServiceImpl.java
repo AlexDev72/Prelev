@@ -68,7 +68,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public UtilisateurResponseDTO update(Long id, UtilisateurCreateDTO dto) {
         return utilisateurRepository.findById(id)
                 .map(u -> {
-                    u.setEmail(dto.getEmail());
                     u.setNom(dto.getNom());
                     u.setPrenom(dto.getPrenom());
                     u.setAge(dto.getAge());
