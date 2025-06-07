@@ -2,12 +2,14 @@ package com.prelev.apirest_springboot.service;
 
 import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
 import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
+import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
 import com.prelev.apirest_springboot.modele.Prelevement;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.PrelevementRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,4 +79,35 @@ public class PrelevementServiceImpl implements PrelevementService {
         dto.setDatePrelevement(prelevement.getDate_prelevement().toLocalDate());
         return dto;
     }
-}
+
+    public List<PrelevementJourDTO> getPrelevementsAvecJour(Utilisateur utilisateur) {
+        return prelevementRepository.findByUtilisateur(utilisateur)
+                .stream()
+                .map(p -> new PrelevementJourDTO(
+                        p.getNom(),
+                        p.getPrix(),
+                        p.getDate_prelevement().toLocalDate().getDayOfMonth()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public List<PrelevementJourDTO> getPrelevementsPourJour(Utilisateur utilisateur, int jour) {
+        List<Prelevement> prelevements = prelevementRepository.findByUtilisateur(utilisateur);
+
+        return prelevements.stream()
+                .filter(p -> {
+                    LocalDate date = p.getDate_prelevement().toLocalDate();
+                    return date.getDayOfMonth() == jour;
+                })
+                .map(p -> {
+                    LocalDate date = p.getDate_prelevement().toLocalDate();
+                    return new PrelevementJourDTO(
+                            p.getNom(),
+                            p.getPrix(),
+                            date.getDayOfMonth()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    }

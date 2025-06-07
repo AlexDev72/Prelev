@@ -1,6 +1,7 @@
 package com.prelev.apirest_springboot.controller;
 
 import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
+import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
 import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.service.PrelevementService;
@@ -43,4 +44,16 @@ public class PrelevementController {
                          @AuthenticationPrincipal Utilisateur utilisateur) {
         return prelevementService.delete(id, utilisateur);
     }
+
+    @GetMapping("/liredate")
+    public List<PrelevementJourDTO> lireDate(@AuthenticationPrincipal Utilisateur utilisateur) {
+        return prelevementService.getPrelevementsAvecJour(utilisateur);
+    }
+
+    @GetMapping("/liredetail")
+    public List<PrelevementJourDTO> lireDetail(@RequestParam("jour") int jour, @AuthenticationPrincipal Utilisateur utilisateur) {
+        return prelevementService.getPrelevementsPourJour(utilisateur, jour);
+    }
+
+
 }
