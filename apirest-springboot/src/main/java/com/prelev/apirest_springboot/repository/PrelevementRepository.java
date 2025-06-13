@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PrelevementRepository extends JpaRepository<Prelevement, Long> {
     List<Prelevement> findByUtilisateur(Utilisateur utilisateur);
+    List<Prelevement> findByUtilisateur_Id(Long utilisateurId);
 }

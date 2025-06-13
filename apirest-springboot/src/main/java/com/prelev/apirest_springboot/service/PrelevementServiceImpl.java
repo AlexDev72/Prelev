@@ -1,5 +1,6 @@
 package com.prelev.apirest_springboot.service;
 
+import com.prelev.apirest_springboot.dto.PrelevementCountParMoisDTO;
 import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
 import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
 import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,4 +112,59 @@ public class PrelevementServiceImpl implements PrelevementService {
                 .collect(Collectors.toList());
     }
 
+    public double getTotalPrelevements(Utilisateur utilisateur) {
+        return prelevementRepository.findByUtilisateur(utilisateur)
+                .stream()
+                .mapToDouble(Prelevement::getPrix)
+                .sum();
     }
+
+    public List<PrelevementResponseDTO> getPrelevementsAvenir(Utilisateur utilisateur) {
+        LocalDate aujourdHui = LocalDate.now();
+        System.out.println("Date du jour : " + aujourdHui + " (mois=" + aujourdHui.getMonthValue() + ", jour=" + aujourdHui.getDayOfMonth() + ")");
+
+        List<Prelevement> prelevementsBruts = prelevementRepository.findByUtilisateur(utilisateur);
+        System.out.println("Nombre prélèvements bruts : " + prelevementsBruts.size());
+
+        List<PrelevementResponseDTO> prelevementsAvenir = prelevementsBruts.stream()
+                .filter(p -> {
+                    int jourPrelev = p.getDate_prelevement().toLocalDate().getDayOfMonth();
+                    int jourAuj = aujourdHui.getDayOfMonth();
+
+                    boolean isAfter = jourPrelev > jourAuj;
+
+                    System.out.println("Prelevement: " + p.getNom() + " date: " + p.getDate_prelevement() + " => avenir (jour > aujourd’hui): " + isAfter);
+                    return isAfter;
+                })
+
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+
+        System.out.println("Nombre de prélèvements à venir: " + prelevementsAvenir.size());
+        return prelevementsAvenir;
+    }
+
+
+    public List<PrelevementCountParMoisDTO> getNombrePrelevementsParMois(Utilisateur utilisateur) {
+        return prelevementRepository.findByUtilisateur(utilisateur)
+                .stream()
+                // On groupe par année et mois
+                .collect(Collectors.groupingBy(
+                        p -> YearMonth.from(p.getDate_prelevement().toLocalDate()),
+                        Collectors.counting()
+                ))
+                .entrySet()
+                .stream()
+                .map(entry -> new PrelevementCountParMoisDTO(
+                        entry.getKey().getYear(),
+                        entry.getKey().getMonthValue(),
+                        entry.getValue()
+                ))
+                .sorted((a, b) -> {
+                    int cmp = Integer.compare(a.getAnnee(), b.getAnnee());
+                    if (cmp != 0) return cmp;
+                    return Integer.compare(a.getMois(), b.getMois());
+                })
+                .collect(Collectors.toList());
+    }
+}

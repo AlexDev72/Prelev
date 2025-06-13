@@ -42,11 +42,7 @@ public class JwtUtil {
         if (claims.get("userId") != null) {
             return Long.parseLong(claims.get("userId").toString());
         }
-
-        // Sinon, vous pouvez utiliser l'email pour retrouver l'ID
         String email = claims.getSubject();
-        // Ici vous devriez avoir accès à votre UserService pour trouver l'ID par email
-        // Mais ce n'est pas idéal car JwtUtil ne devrait pas dépendre de UserService
 
         throw new IllegalArgumentException("Token ne contient pas d'ID utilisateur");
     }
