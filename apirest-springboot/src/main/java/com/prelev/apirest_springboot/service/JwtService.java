@@ -30,6 +30,10 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
+        if (token == null || token.isEmpty() || token.chars().filter(ch -> ch == '.').count() != 2) {
+            System.out.println("[extractAllClaims] Token invalide ou mal formé : " + token);
+            throw new RuntimeException("Token invalide ou mal signé");
+        }
         try {
             return Jwts.parser()
                     .setSigningKey(SECRET_KEY)

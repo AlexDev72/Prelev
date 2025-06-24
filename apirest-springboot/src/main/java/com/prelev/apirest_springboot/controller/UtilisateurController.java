@@ -7,6 +7,7 @@ import com.prelev.apirest_springboot.security.JwtUtil; // Import ajouté
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -60,4 +61,11 @@ public class UtilisateurController {
     public String delete(@PathVariable Long id) {
         return utilisateurService.delete(id);
     }
+
+    @GetMapping("/verifie")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> verifierToken() {
+        return ResponseEntity.ok("Token valide");
+    }
+
 }

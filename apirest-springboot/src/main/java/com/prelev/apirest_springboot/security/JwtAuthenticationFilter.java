@@ -56,43 +56,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Récupération de l'en-tête Authorization
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
 
-        // Si absence de token Bearer, poursuivre sans authentification
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Pas de token Bearer, continuer la chaîne sans authentification
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraction du token JWT
         jwt = authHeader.substring(7);
-        // Extraction du nom d'utilisateur depuis le token
-        username = jwtService.extractUsername(jwt);
 
-        // Vérification que l'utilisateur n'est pas déjà authentifié dans le contexte Spring
+        try {
+            // Essayer d'extraire le username du token
+            username = jwtService.extractUsername(jwt);
+        } catch (Exception e) {
+            // Log l'erreur pour debug
+            System.out.println("[JwtAuthenticationFilter] Token invalide ou mal formé : " + e.getMessage());
+            // Ne pas authentifier, juste passer la requête
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            // Chargement des détails utilisateur
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Validation du token JWT (signature, expiration, etc.)
             if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
-                // Création de l'objet d'authentification Spring Security
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                // Ajout des détails de la requête HTTP (IP, session, etc.)
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Placement de l'authentification dans le contexte Spring Security
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // Passage au filtre suivant dans la chaîne
         filterChain.doFilter(request, response);
     }
+
 }

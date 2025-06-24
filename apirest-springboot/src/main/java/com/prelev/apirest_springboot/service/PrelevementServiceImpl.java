@@ -1,15 +1,12 @@
 package com.prelev.apirest_springboot.service;
 
-import com.prelev.apirest_springboot.dto.PrelevementCountParMoisDTO;
-import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
-import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
-import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
+import com.prelev.apirest_springboot.dto.*;
 import com.prelev.apirest_springboot.modele.Prelevement;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.PrelevementRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -33,8 +30,7 @@ public class PrelevementServiceImpl implements PrelevementService {
         Prelevement prelevement = new Prelevement();
         prelevement.setNom(dto.getNom());
         prelevement.setPrix(dto.getPrix());
-        java.sql.Date sqlDate = java.sql.Date.valueOf(dto.getDatePrelevement());
-        prelevement.setDate_prelevement(sqlDate);
+        prelevement.setDate_prelevement(dto.getDatePrelevement());
         prelevement.setUtilisateur(utilisateur);
         Prelevement saved = prelevementRepository.save(prelevement);
         return toResponseDTO(saved);
@@ -56,7 +52,7 @@ public class PrelevementServiceImpl implements PrelevementService {
                 .map(p -> {
                     p.setNom(dto.getNom());
                     p.setPrix(dto.getPrix());
-                    p.setDate_prelevement(Date.valueOf(dto.getDatePrelevement()));
+                    p.setDate_prelevement(dto.getDatePrelevement());
                     Prelevement updated = prelevementRepository.save(p);
                     return toResponseDTO(updated);
                 })
@@ -78,7 +74,7 @@ public class PrelevementServiceImpl implements PrelevementService {
         dto.setId(prelevement.getId());
         dto.setNom(prelevement.getNom());
         dto.setPrix(prelevement.getPrix());
-        dto.setDatePrelevement(prelevement.getDate_prelevement().toLocalDate());
+        dto.setDatePrelevement(prelevement.getDate_prelevement());
         return dto;
     }
 
@@ -88,7 +84,7 @@ public class PrelevementServiceImpl implements PrelevementService {
                 .map(p -> new PrelevementJourDTO(
                         p.getNom(),
                         p.getPrix(),
-                        p.getDate_prelevement().toLocalDate().getDayOfMonth()
+                        p.getDate_prelevement().getDayOfMonth()
                 ))
                 .collect(Collectors.toList());
     }
@@ -98,11 +94,11 @@ public class PrelevementServiceImpl implements PrelevementService {
 
         return prelevements.stream()
                 .filter(p -> {
-                    LocalDate date = p.getDate_prelevement().toLocalDate();
+                    LocalDate date = p.getDate_prelevement();
                     return date.getDayOfMonth() == jour;
                 })
                 .map(p -> {
-                    LocalDate date = p.getDate_prelevement().toLocalDate();
+                    LocalDate date = p.getDate_prelevement();
                     return new PrelevementJourDTO(
                             p.getNom(),
                             p.getPrix(),
@@ -119,6 +115,7 @@ public class PrelevementServiceImpl implements PrelevementService {
                 .sum();
     }
 
+    // prélèvements avenir du mois
     public List<PrelevementResponseDTO> getPrelevementsAvenir(Utilisateur utilisateur) {
         LocalDate aujourdHui = LocalDate.now();
         System.out.println("Date du jour : " + aujourdHui + " (mois=" + aujourdHui.getMonthValue() + ", jour=" + aujourdHui.getDayOfMonth() + ")");
@@ -128,7 +125,7 @@ public class PrelevementServiceImpl implements PrelevementService {
 
         List<PrelevementResponseDTO> prelevementsAvenir = prelevementsBruts.stream()
                 .filter(p -> {
-                    int jourPrelev = p.getDate_prelevement().toLocalDate().getDayOfMonth();
+                    int jourPrelev = p.getDate_prelevement().getDayOfMonth();
                     int jourAuj = aujourdHui.getDayOfMonth();
 
                     boolean isAfter = jourPrelev > jourAuj;
@@ -136,7 +133,6 @@ public class PrelevementServiceImpl implements PrelevementService {
                     System.out.println("Prelevement: " + p.getNom() + " date: " + p.getDate_prelevement() + " => avenir (jour > aujourd’hui): " + isAfter);
                     return isAfter;
                 })
-
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
 
@@ -145,26 +141,28 @@ public class PrelevementServiceImpl implements PrelevementService {
     }
 
 
-    public List<PrelevementCountParMoisDTO> getNombrePrelevementsParMois(Utilisateur utilisateur) {
-        return prelevementRepository.findByUtilisateur(utilisateur)
-                .stream()
-                // On groupe par année et mois
-                .collect(Collectors.groupingBy(
-                        p -> YearMonth.from(p.getDate_prelevement().toLocalDate()),
-                        Collectors.counting()
+    // prélèvements par mois (liste des prélèvements sans date de fin)
+    public List<PrelevementParMoisDTO> getPrelevementsParMois(Long idUtilisateur) {
+        LocalDate today = LocalDate.now();
+
+        return prelevementRepository.findByUtilisateur_Id(idUtilisateur).stream()
+                .filter(p -> p.getDate_fin() == null || p.getDate_fin().isAfter(today))
+                .map(p -> new PrelevementParMoisDTO(
+                        p.getId(),
+                        p.getNom(),
+                        String.format("%02d", p.getDate_prelevement().getDayOfMonth()), // ici on ne garde que le jour
+                        p.getPrix()
                 ))
-                .entrySet()
-                .stream()
-                .map(entry -> new PrelevementCountParMoisDTO(
-                        entry.getKey().getYear(),
-                        entry.getKey().getMonthValue(),
-                        entry.getValue()
-                ))
-                .sorted((a, b) -> {
-                    int cmp = Integer.compare(a.getAnnee(), b.getAnnee());
-                    if (cmp != 0) return cmp;
-                    return Integer.compare(a.getMois(), b.getMois());
-                })
                 .collect(Collectors.toList());
     }
+
+    public long countPrelevements(Long idUtilisateur) {
+        LocalDate today = LocalDate.now();
+
+        return prelevementRepository.findByUtilisateur_Id(idUtilisateur).stream()
+                .filter(p -> p.getDate_fin() == null || p.getDate_fin().isAfter(today))
+                .count();
+    }
+
+
 }

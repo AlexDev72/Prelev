@@ -1,9 +1,6 @@
 package com.prelev.apirest_springboot.service;
 
-import com.prelev.apirest_springboot.dto.PrelevementCountParMoisDTO;
-import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
-import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
-import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
+import com.prelev.apirest_springboot.dto.*;
 import com.prelev.apirest_springboot.modele.Prelevement;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 
@@ -18,6 +15,8 @@ public interface PrelevementService {
     List<PrelevementJourDTO> getPrelevementsPourJour(Utilisateur utilisateur, int jour);
     double getTotalPrelevements(Utilisateur utilisateur);
     List<PrelevementResponseDTO> getPrelevementsAvenir(Utilisateur utilisateur);
-    List<PrelevementCountParMoisDTO> getNombrePrelevementsParMois(Utilisateur utilisateur);
+    public List<PrelevementParMoisDTO> getPrelevementsParMois(Long idUtilisateur);
+    long countPrelevements(Long idUtilisateur);
+
 
 }

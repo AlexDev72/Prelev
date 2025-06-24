@@ -1,20 +1,18 @@
 package com.prelev.apirest_springboot.controller;
 
-import com.prelev.apirest_springboot.dto.PrelevementCountParMoisDTO;
 import com.prelev.apirest_springboot.dto.PrelevementCreateDTO;
 import com.prelev.apirest_springboot.dto.PrelevementJourDTO;
+import com.prelev.apirest_springboot.dto.PrelevementParMoisDTO;
 import com.prelev.apirest_springboot.dto.PrelevementResponseDTO;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.UtilisateurRepository;
 import com.prelev.apirest_springboot.security.CustomUserDetails;
 import com.prelev.apirest_springboot.service.PrelevementService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin(origins = "http://192.168.1.22:3000", allowCredentials = "true")
@@ -66,9 +64,27 @@ public class PrelevementController {
     }
 
     @GetMapping("/total")
-    public double getTotalPrelevements(@AuthenticationPrincipal Utilisateur utilisateur) {
+    public double getTotalPrelevements() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.getTotalPrelevements(utilisateur);
     }
+
+    @GetMapping("/totalprelev")
+    public double getCountPrelevements() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
+        return prelevementService.countPrelevements(utilisateur.getId());
+    }
+
 
     @GetMapping("/avenir")
     public List<PrelevementResponseDTO> getPrelevementsAvenir() {
@@ -81,11 +97,15 @@ public class PrelevementController {
         return prelevementService.getPrelevementsAvenir(utilisateur);
     }
 
-
-
     @GetMapping("/par-mois")
-    public List<PrelevementCountParMoisDTO> getNombrePrelevementsParMois(@AuthenticationPrincipal Utilisateur utilisateur) {
-        return prelevementService.getNombrePrelevementsParMois(utilisateur);
+    public List<PrelevementParMoisDTO> getPrelevementsParMois() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
+        return prelevementService.getPrelevementsParMois(utilisateur.getId());
     }
 
 }
