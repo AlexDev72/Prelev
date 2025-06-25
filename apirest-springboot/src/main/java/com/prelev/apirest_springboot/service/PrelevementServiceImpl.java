@@ -4,6 +4,8 @@ import com.prelev.apirest_springboot.dto.*;
 import com.prelev.apirest_springboot.modele.Prelevement;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.PrelevementRepository;
+import com.prelev.apirest_springboot.repository.UtilisateurRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
@@ -16,26 +18,33 @@ import java.util.stream.Collectors;
 public class PrelevementServiceImpl implements PrelevementService {
 
     private final PrelevementRepository prelevementRepository;
+    private final UtilisateurRepository utilisateurRepository;
 
-    public PrelevementServiceImpl(PrelevementRepository prelevementRepository) {
+    public PrelevementServiceImpl(PrelevementRepository prelevementRepository, UtilisateurRepository utilisateurRepository) {
         this.prelevementRepository = prelevementRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     @Override
+    @Transactional
     public PrelevementResponseDTO create(PrelevementCreateDTO dto, Utilisateur utilisateur) {
+        // Validation des données
         if (dto.getDatePrelevement() == null) {
             throw new IllegalArgumentException("La date de prélèvement est obligatoire");
         }
+        if (utilisateur == null) {
+            throw new IllegalArgumentException("Utilisateur doit être authentifié");
+        }
 
+        // Création du prélèvement
         Prelevement prelevement = new Prelevement();
         prelevement.setNom(dto.getNom());
         prelevement.setPrix(dto.getPrix());
         prelevement.setDate_prelevement(dto.getDatePrelevement());
         prelevement.setUtilisateur(utilisateur);
-        Prelevement saved = prelevementRepository.save(prelevement);
-        return toResponseDTO(saved);
-    }
 
+        return toResponseDTO(prelevementRepository.save(prelevement));
+    }
 
     @Override
     public List<PrelevementResponseDTO> read(Utilisateur utilisateur) {

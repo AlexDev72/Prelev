@@ -8,9 +8,13 @@ import com.prelev.apirest_springboot.modele.Utilisateur;
 import com.prelev.apirest_springboot.repository.UtilisateurRepository;
 import com.prelev.apirest_springboot.security.CustomUserDetails;
 import com.prelev.apirest_springboot.service.PrelevementService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,36 +34,82 @@ public class PrelevementController {
     }
 
     @PostMapping("/cree")
-    public PrelevementResponseDTO create(@RequestBody PrelevementCreateDTO dto,
-                                         @AuthenticationPrincipal Utilisateur utilisateur) {
-        return prelevementService.create(dto, utilisateur);
+    public ResponseEntity<?> createPrelevement(
+            @Valid @RequestBody PrelevementCreateDTO dto,
+            Authentication authentication) {
+
+        // Méthode robuste pour récupérer l'utilisateur
+        Utilisateur utilisateur = null;
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            utilisateur = ((CustomUserDetails) authentication.getPrincipal()).getUtilisateur();
+        }
+
+        if (utilisateur == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"Authentification invalide\"}");
+        }
+
+        return ResponseEntity.ok(prelevementService.create(dto, utilisateur));
     }
 
     @GetMapping("/lire")
-    public List<PrelevementResponseDTO> read(@AuthenticationPrincipal Utilisateur utilisateur) {
+    public List<PrelevementResponseDTO> read() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.read(utilisateur);
     }
 
     @PutMapping("/modifier/{id}")
     public PrelevementResponseDTO update(@PathVariable Long id,
-                                         @RequestBody PrelevementCreateDTO dto,
-                                         @AuthenticationPrincipal Utilisateur utilisateur) {
+                                         @RequestBody PrelevementCreateDTO dto) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.update(id, dto, utilisateur);
     }
 
     @DeleteMapping("/supprimer/{id}")
-    public String delete(@PathVariable Long id,
-                         @AuthenticationPrincipal Utilisateur utilisateur) {
+    public String delete(@PathVariable Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.delete(id, utilisateur);
     }
 
     @GetMapping("/liredate")
-    public List<PrelevementJourDTO> lireDate(@AuthenticationPrincipal Utilisateur utilisateur) {
+    public List<PrelevementJourDTO> lireDate() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.getPrelevementsAvecJour(utilisateur);
     }
 
     @GetMapping("/liredetail")
-    public List<PrelevementJourDTO> lireDetail(@RequestParam("jour") int jour, @AuthenticationPrincipal Utilisateur utilisateur) {
+    public List<PrelevementJourDTO> lireDetail(@RequestParam("jour") int jour) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+
         return prelevementService.getPrelevementsPourJour(utilisateur, jour);
     }
 

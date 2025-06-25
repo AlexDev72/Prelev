@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -46,13 +47,13 @@ public class JwtService {
     }
 
 
-    public boolean isTokenValid(String token, String username) {
-        String tokenUsername = extractUsername(token);
-        boolean sameUser = tokenUsername.equalsIgnoreCase(username); // <- Utilisez equalsIgnoreCase()
-        boolean expired = isTokenExpired(token);
-        boolean valid = sameUser && !expired;
-        return valid;
+    // Option 1 (Recommandée - Standard Spring)
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
+
+
 
     private boolean isTokenExpired(String token) {
         final Date expiration = extractClaim(token, Claims::getExpiration);

@@ -43,9 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/auth/connexion").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/utilisateur/cree").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/prelevement/cree").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/utilisateur/modifier/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/utilisateur/profil").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/prelevement/cree").authenticated()
                                 .requestMatchers("/prelevement/liredate").authenticated()
                                 .requestMatchers("/prelevement/liredetail").authenticated()
                                 .requestMatchers("/prelevement/total").authenticated()
@@ -76,16 +76,23 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Liste explicite des origines autorisées (pas "*")
-        configuration.setAllowedOrigins(List.of("http://192.168.1.22:3000"));
+        // Autorisez votre origine frontend (remplacez par votre URL réelle)
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://192.168.1.22:3000"));
 
+        // Autorisez les méthodes nécessaires
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*")); // ça, c'est ok
+
+        // Autorisez les headers nécessaires (y compris Authorization)
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "withcredentials"));
+
+        // Autorisez les cookies/credentials
         configuration.setAllowCredentials(true);
+
+        // Exposez les headers nécessaires
+        configuration.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
