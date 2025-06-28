@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @CrossOrigin(origins = "http://192.168.1.22:3000", allowCredentials = "true")
@@ -114,7 +115,7 @@ public class PrelevementController {
     }
 
     @GetMapping("/total")
-    public double getTotalPrelevements() {
+    public BigDecimal getTotalPrelevements() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();

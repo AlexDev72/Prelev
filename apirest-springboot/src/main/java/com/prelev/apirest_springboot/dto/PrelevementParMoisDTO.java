@@ -1,12 +1,14 @@
 package com.prelev.apirest_springboot.dto;
 
+import java.math.BigDecimal;
+
 public class PrelevementParMoisDTO {
     private Long id;
     private String nom;
     private String datePrelevement; // Le jour seulement, au format texte ("30")
-    private Integer prix;
+    private BigDecimal prix;
 
-    public PrelevementParMoisDTO(Long id, String nom, String datePrelevement, Integer prix) {
+    public PrelevementParMoisDTO(Long id, String nom, String datePrelevement, BigDecimal prix) {
         this.id = id;
         this.nom = nom;
         this.datePrelevement = datePrelevement;
@@ -25,7 +27,7 @@ public class PrelevementParMoisDTO {
         return datePrelevement;
     }
 
-    public Integer getPrix() {
+    public BigDecimal getPrix() {
         return prix;
     }
 
@@ -41,7 +43,7 @@ public class PrelevementParMoisDTO {
         this.datePrelevement = datePrelevement;
     }
 
-    public void setPrix(Integer prix) {
+    public void setPrix(BigDecimal prix) {
         this.prix = prix;
     }
 }

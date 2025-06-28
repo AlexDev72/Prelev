@@ -1,12 +1,13 @@
 package com.prelev.apirest_springboot.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class PrelevementResponseDTO {
     private Long id;
     private String nom;
     private LocalDate datePrelevement;
-    private Integer prix;
+    private BigDecimal prix;
 
     // Getters & Setters
 
@@ -34,34 +35,12 @@ public class PrelevementResponseDTO {
         this.datePrelevement = datePrelevement;
     }
 
-    public Integer getPrix() {
+    public BigDecimal getPrix() {
         return prix;
     }
 
-    public void setPrix(Integer prix) {
+    public void setPrix(BigDecimal prix) {
         this.prix = prix;
     }
 
-    public static class PrelevementJourDTO {
-        private String nom;
-        private Double prix;
-        private int jour;
-
-        // Constructeur
-        public PrelevementJourDTO(String nom, Double prix, int jour) {
-            this.nom = nom;
-            this.prix = prix;
-            this.jour = jour;
-        }
-
-        // Getters et setters
-        public String getNom() { return nom; }
-        public void setNom(String nom) { this.nom = nom; }
-
-        public Double getPrix() { return prix; }
-        public void setPrix(Double prix) { this.prix = prix; }
-
-        public int getJour() { return jour; }
-        public void setJour(int jour) { this.jour = jour; }
-    }
 }

@@ -4,6 +4,7 @@ import com.prelev.apirest_springboot.dto.*;
 import com.prelev.apirest_springboot.modele.Prelevement;
 import com.prelev.apirest_springboot.modele.Utilisateur;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface PrelevementService {
@@ -13,7 +14,7 @@ public interface PrelevementService {
     String delete(Long id, Utilisateur utilisateur);
     List<PrelevementJourDTO> getPrelevementsAvecJour(Utilisateur utilisateur);
     List<PrelevementJourDTO> getPrelevementsPourJour(Utilisateur utilisateur, int jour);
-    double getTotalPrelevements(Utilisateur utilisateur);
+    BigDecimal getTotalPrelevements(Utilisateur utilisateur);
     List<PrelevementResponseDTO> getPrelevementsAvenir(Utilisateur utilisateur);
     public List<PrelevementParMoisDTO> getPrelevementsParMois(Long idUtilisateur);
     long countPrelevements(Long idUtilisateur);

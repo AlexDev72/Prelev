@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -117,11 +118,11 @@ public class PrelevementServiceImpl implements PrelevementService {
                 .collect(Collectors.toList());
     }
 
-    public double getTotalPrelevements(Utilisateur utilisateur) {
+    public BigDecimal getTotalPrelevements(Utilisateur utilisateur) {
         return prelevementRepository.findByUtilisateur(utilisateur)
                 .stream()
-                .mapToDouble(Prelevement::getPrix)
-                .sum();
+                .map(Prelevement::getPrix)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     // prélèvements avenir du mois

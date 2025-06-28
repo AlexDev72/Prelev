@@ -1,7 +1,8 @@
 package com.prelev.apirest_springboot.modele;
 
 import jakarta.persistence.*;
-import java.sql.Date;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -20,7 +21,8 @@ public class Prelevement {
     @Column(name = "date_fin")
     private LocalDate date_fin;
 
-    private Integer prix;
+    @Column(precision = 10, scale = 2) // 10 chiffres au total, 2 après la virgule
+    private BigDecimal prix; // Changé de Integer à BigDecimal
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "utilisateur_id")
@@ -60,11 +62,11 @@ public class Prelevement {
         this.date_prelevement = date_prelevement;
     }
 
-    public Integer getPrix() {
+    public BigDecimal getPrix() {
         return prix;
     }
 
-    public void setPrix(Integer prix) {
+    public void setPrix(BigDecimal prix) {
         this.prix = prix;
     }
 

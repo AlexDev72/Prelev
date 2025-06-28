@@ -76,19 +76,18 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Autorisez votre origine frontend (remplacez par votre URL réelle)
+        // Autorise origine frontend
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://192.168.1.22:3000"));
 
-        // Autorisez les méthodes nécessaires
+        // Autorise les méthodes nécessaires
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Autorisez les headers nécessaires (y compris Authorization)
+        // Autorise les headers nécessaires (y compris Authorization)
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "withcredentials"));
 
-        // Autorisez les cookies/credentials
+        // Autorise les cookies/credentials
         configuration.setAllowCredentials(true);
 
-        // Exposez les headers nécessaires
         configuration.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

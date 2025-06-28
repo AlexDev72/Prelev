@@ -2,12 +2,13 @@ package com.prelev.apirest_springboot.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class PrelevementCreateDTO {
     private String nom;
     private LocalDate datePrelevement;
-    private Integer prix;
+    private BigDecimal prix;
 
     // Getters & Setters
     public String getNom() {
@@ -26,11 +27,11 @@ public class PrelevementCreateDTO {
         this.datePrelevement = datePrelevement;
     }
 
-    public Integer getPrix() {
+    public BigDecimal getPrix() {
         return prix;
     }
 
-    public void setPrix(Integer prix) {
+    public void setPrix(BigDecimal prix) {
         this.prix = prix;
     }
 }
