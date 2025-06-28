@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Filtre exécuté à chaque requête HTTP.
-     *
      * 1. Récupère l'en-tête Authorization.
      * 2. Vérifie la présence d'un token Bearer.
      * 3. Extrait le nom d'utilisateur du token JWT.
@@ -87,8 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
-
-                System.out.println("[DEBUG] Authentification établie pour: " + username);
+                
             }
         }
 

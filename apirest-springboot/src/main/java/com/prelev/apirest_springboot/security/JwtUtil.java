@@ -7,7 +7,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
 import io.jsonwebtoken.security.Keys;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,9 +17,6 @@ public class JwtUtil {
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(
             "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF".getBytes()
     );
-
-
-    private static final long EXPIRATION_TIME = 86400000; // 24 heures en ms
 
     public static String generateToken(Utilisateur user) { // Prend un User entier en paramètre
         return Jwts.builder()

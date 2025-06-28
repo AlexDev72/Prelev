@@ -32,7 +32,6 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         if (token == null || token.isEmpty() || token.chars().filter(ch -> ch == '.').count() != 2) {
-            System.out.println("[extractAllClaims] Token invalide ou mal formé : " + token);
             throw new RuntimeException("Token invalide ou mal signé");
         }
         try {
@@ -41,7 +40,6 @@ public class JwtService {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            System.out.println("[extractAllClaims] Erreur lors de l'extraction des claims : " + e.getMessage());
             throw new RuntimeException("Token invalide ou mal signé");
         }
     }
